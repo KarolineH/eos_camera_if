@@ -9,6 +9,7 @@ The class provides the following methods:
 - start_all(): Start recording a video without fixed duration with all connected cameras in synchronisation.
 - stop_all(): Stop recording video for all connected cameras in synchronisation.
 - rec_all_for_duration(duration): Record a video of a given duration with all connected cameras in synchronisation.
+In favour of maintaining sync, all videos are saved to the camera's storage media only and can be downloaded later.
 
 Note: communication with the cameras has some inherent delays. When using the start and stop methods, 
 the actual duration of the recorded video can be slightly longer than the waiting time between function calls (~within 2 seconds).

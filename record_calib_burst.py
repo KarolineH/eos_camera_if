@@ -9,7 +9,7 @@ During the burst, autofocus is disabled and can not adjust, so make sure to posi
 Move the calibration pattern around in the camera's field of view to get a good spread of images. All images are saved in the target directory.
 '''
 
-target_dir = '/home/kh790/data/calibration_imgs/manual_calib/2024-05-30_14-08-50'
+target_dir = '/path/to/dir'
 duration = 15
 
 # Initialise camera
