@@ -152,6 +152,21 @@ class EOS(object):
         self.set_config_fire_and_forget('syncdatetimeutc', 1)
         self.set_config_fire_and_forget('syncdatetimeutc', 0)
         return
+    
+    def fixed_focus(self, focus_dist):
+        '''
+        Set the focus to a fixed distance of [focus_dist] large increments from the near limit.
+        This uses the manual focus drive, which can not be read from the camera and can't be set easily in absolute values, instead it is set in increments.
+        '''
+        # First, return the focus to the near limit for a fixed reference point
+        for i in range(17):
+            self.manual_focus(value=2) # bring the focus gradually to the near point for a fixed reference point
+            time.sleep(0.25)
+        for i in range(focus_dist):
+            self.manual_focus(value=6) # focus manually to the desired distance as specified in nr. of large steps
+            time.sleep(0.25)
+        msg = f"Focus set to {focus_dist} steps from near limit."
+        return msg
 
     def get_config(self, config_name=None):
         '''
