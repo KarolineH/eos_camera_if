@@ -40,7 +40,7 @@ def detect_EOS_cameras():
 
     # Kill any existing gphoto processes to free up the USB ports for communication
     command = f'killall gvfsd-gphoto2 gvfs-gphoto2-volume-monitor'
-    sp.call([command], shell=True)
+    sp.call([command], shell=True,stdout=sp.DEVNULL, stderr=sp.DEVNULL)
 
     camera_list = list(gp.Camera.autodetect()) # Find all available cameras
     if not camera_list:

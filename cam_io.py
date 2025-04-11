@@ -14,7 +14,7 @@ class EOS(object):
         # Kill any existing gphoto processes to free up the USB ports for communication
         # prevents error *Could not claim the USB device*
         command = f'killall gvfsd-gphoto2 gvfs-gphoto2-volume-monitor'
-        sp.call([command], shell=True)
+        sp.call([command], shell=True, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
 
         camera_list = list(gp.Camera.autodetect()) # Find all available cameras
         if not camera_list:
@@ -153,20 +153,30 @@ class EOS(object):
         self.set_config_fire_and_forget('syncdatetimeutc', 0)
         return
     
-    def fixed_focus(self, focus_dist):
+    def zero_focus(self):
         '''
-        Set the focus to a fixed distance of [focus_dist] large increments from the near limit.
-        This uses the manual focus drive, which can not be read from the camera and can't be set easily in absolute values, instead it is set in increments.
+        Reset the (manual) focus distance to the max distance / far limit.
+        This uses the manual focus drive, which can not be read from the camera and can't be set easily in absolute values, instead it is set in increments of varying size.
+        Please note that the interval sizes vary wildly depending on the image/environment.
         '''
         # First, return the focus to the near limit for a fixed reference point
-        for i in range(17):
-            self.manual_focus(value=2) # bring the focus gradually to the near point for a fixed reference point
-            time.sleep(0.25)
-        for i in range(focus_dist):
-            self.manual_focus(value=6) # focus manually to the desired distance as specified in nr. of large steps
-            time.sleep(0.25)
-        msg = f"Focus set to {focus_dist} steps from near limit."
-        return msg
+        for i in range(15):
+            self.manual_focus(value=6) # bring the focus gradually to the far point for a fixed reference point
+            time.sleep(0.2)
+        return
+    
+    def set_focus_steps(self, steps=[2,2,2,2,2]):
+        '''
+        ! NOTE: ALWAYS set this with the lens cap ON!
+        Focus distance 'step' size varies wildly depending on the image/environment.
+        '''
+        self.zero_focus() # set the camera to a specified focus distance
+        time.sleep(0.25)
+
+        for i in steps:
+            time.sleep(0.75)
+            self.manual_focus(i)
+        return
 
     def get_config(self, config_name=None):
         '''
@@ -183,7 +193,7 @@ class EOS(object):
                     choices = list(conf.get_choices())
                 except:
                     choices = None
-                    print(f"Config {config_name} provides no choices")
+                    # print(f"Config {config_name} provides no choices")
                 return value, choices
             else:
                 print(f"Config {config_name} not found")
